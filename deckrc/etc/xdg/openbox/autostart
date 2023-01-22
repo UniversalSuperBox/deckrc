@@ -1,2 +1,4 @@
-drc-sim-backend &
-xterm &
+sleep 5 && xrandr --output 'eDP' --rotate 'right' &
+sleep 5 && xinput set-prop 'FTS3528:00 2808:1015' --type=float 'Coordinate Transformation Matrix' 0 1 0 -1 0 1 0 0 1 &
+sleep 10 && drc-sim-backend &
+sleep 10 && xterm &

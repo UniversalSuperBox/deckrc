@@ -16,25 +16,21 @@ actions:
     destination: /drc-sim-build
 
   - action: apt
+    recommends: false
     packages:
       - openbox
       - openbox-menu
+      - upower
       - xorg
+      - xinput
+      - xterm
       - zstd
       - passwd
       - firmware-realtek
       - firmware-amd-graphics
+      - laptop-mode-tools
       # For my sanity
       - nano
-  #     - bash
-  #     - hdparm
-  #     - systemd-sysv
-  #     - tmux
-  #     - coreutils
-  #     - util-linux
-  #     - fdisk
-  #     - openssl
-  #     - nvme-cli
 
   - action: apt
     packages:
@@ -112,7 +108,7 @@ actions:
 
   - action: image-partition
     imagename: {{ $image }}
-    imagesize: 3G
+    imagesize: 2.2G
     partitiontype: msdos
     mountpoints:
       - mountpoint: /
