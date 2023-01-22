@@ -1,0 +1,4 @@
+[submodule "drc-sim"]
+	path = drc-sim
+	url = https://github.com/UniversalSuperBox/drc-sim.git
+	branch = develop
