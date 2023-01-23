@@ -29,6 +29,7 @@ actions:
       - firmware-realtek
       - firmware-amd-graphics
       - laptop-mode-tools
+      - util-linux
       # For my sanity
       - nano
 
@@ -64,6 +65,11 @@ actions:
     - "cmake"
     - "zlib1g-dev"
     - "zlib1g"
+
+  - action: apt
+    recommends: false
+    packages:
+      - openjdk-8-jre
 
   - action: overlay
     source: deckrc/
@@ -108,7 +114,7 @@ actions:
 
   - action: image-partition
     imagename: {{ $image }}
-    imagesize: 2.2G
+    imagesize: 2.6G
     partitiontype: msdos
     mountpoints:
       - mountpoint: /
