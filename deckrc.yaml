@@ -2,82 +2,20 @@
 
 architecture: amd64
 actions:
-
-  - action: debootstrap
-    suite: "unstable"
-    components:
-      - main
-      - non-free
-    mirror: http://deb.debian.org/debian
-    variant: minbase
-
-  - action: overlay
-    source: drc-sim/
-    destination: /drc-sim-build
-
-  - action: apt
-    recommends: false
-    packages:
-      - openbox
-      - openbox-menu
-      - upower
-      - xorg
-      - xinput
-      - xterm
-      - zstd
-      - passwd
-      - firmware-realtek
-      - firmware-amd-graphics
-      - laptop-mode-tools
-      - util-linux
-      # For my sanity
-      - nano
-
-  - action: apt
-    packages:
-    - "python3"
-    - "python3-pip"
-    - "python3-dev"
-    - "net-tools"
-    - "wireless-tools"
-    - "sysvinit-utils"
-    - "psmisc"
-    - "rfkill"
-    - "isc-dhcp-client"
-    - "ifmetric"
-    - "python3-tk"
-    - "policykit-1"
-    - "libssl-dev"
-    - "libssl3"
-    - "libnl-genl-3-dev"
-    - "libnl-genl-3-200"
-    - "git"
-    - "gcc"
-    - "g++"
-    - "make"
-    - "pkg-config"
-    - "libavcodec-dev"
-    - "libavcodec59"
-    - "libswscale-dev"
-    - "libswscale6"
-    - "libjpeg-dev"
-    - "libjpeg62-turbo"
-    - "cmake"
-    - "zlib1g-dev"
-    - "zlib1g"
-
-  - action: apt
-    recommends: false
-    packages:
-      - openjdk-8-jre
+  - action: unpack
+    file: "deckrc-basic.tar.gz"
 
   - action: overlay
     source: deckrc/
     destination: /
 
+  - action: overlay
+    source: drc-sim/
+    destination: /drc-sim-build
+
   - action: run
     chroot: true
-    command: cd /drc-sim-build && ./install.sh
+    command: cd /drc-sim-build && VIRTUAL_ENV='/usr/local/share/drc_venv' ./install.sh
 
   - action: run
     chroot: true
@@ -114,7 +52,7 @@ actions:
 
   - action: image-partition
     imagename: {{ $image }}
-    imagesize: 2.6G
+    imagesize: 2.0G
     partitiontype: msdos
     mountpoints:
       - mountpoint: /
@@ -140,20 +78,12 @@ actions:
         start: 95%
         end: 100%
 
-  - action: apt
-    packages:
-      - grub2-common
-      - grub-efi-amd64-signed
-      - grub-pc
-      - shim-signed
-      - linux-image-amd64
-
   - action: filesystem-deploy
     description: Deploying filesystem into image
 
   - action: run
     chroot: true
-    command: update-grub
+    command: update-initramfs -u
 
   - action: run
     chroot: true
@@ -164,14 +94,8 @@ actions:
     command: grub-install --target=i386-pc /dev/vda
 
   - action: run
-    description: Remove the configuration file for the fallback EFI binary, fbx64.efi
     chroot: true
-    command: rm /boot/efi/EFI/BOOT/BOOTX64.CSV
-
-  - action: run
-    description: Remove the fallback EFI binary, fbx64.efi, because it'll try to modify EFI NVRAM
-    chroot: true
-    command: rm /boot/efi/EFI/BOOT/fbx64.efi
+    command: update-grub
 
   - action: run
     description: Add tmpfs /tmp to fstab
@@ -182,4 +106,3 @@ actions:
     description: Add tmpfs /run to fstab
     chroot: true
     command: echo 'none /run tmpfs rw,nosuid,relatime 0 0' >> /etc/fstab
-

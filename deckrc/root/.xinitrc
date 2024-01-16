@@ -1,2 +1,2 @@
-xrdb -merge /root/.Xresources
-exec openbox-session
+# xrdb -merge /root/.Xresources
+# exec openbox-session

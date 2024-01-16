@@ -1,0 +1,87 @@
+{{- $image := or .image "deckrc-basic.tar.gz" -}}
+
+architecture: amd64
+actions:
+  - action: debootstrap
+    suite: "unstable"
+    components:
+      - main
+      - non-free
+      - non-free-firmware
+    mirror: http://deb.debian.org/debian
+    variant: minbase
+
+  - action: apt
+    recommends: false
+    packages:
+      - upower
+      - sway
+      - xinput
+      - xterm
+      - zstd
+      - passwd
+      - firmware-realtek
+      - firmware-amd-graphics
+      - laptop-mode-tools
+      - util-linux
+      - openssh-server
+      # For my sanity
+      - nano
+      # boot stuff
+      - grub2-common
+      - grub-efi-amd64-signed
+      - grub-pc
+      - shim-signed
+      - linux-image-amd64
+      - systemd
+      - systemd-resolved
+
+  - action: apt
+    packages:
+    - "python3"
+    - "python3-pip"
+    - "python3-virtualenv"
+    - "python3-dev"
+    - "net-tools"
+    - "wireless-tools"
+    - "sysvinit-utils"
+    - "psmisc"
+    - "rfkill"
+    - "isc-dhcp-client"
+    - "ifmetric"
+    - "python3-tk"
+    - "policykit-1"
+    - "libssl-dev"
+    - "libssl3"
+    - "libnl-genl-3-dev"
+    - "libnl-genl-3-200"
+    - "git"
+    - "gcc"
+    - "g++"
+    - "make"
+    - "pkg-config"
+    - "libavcodec-dev"
+    - "libswscale-dev"
+    - "libjpeg-dev"
+    - "cmake"
+    - "zlib1g-dev"
+    - "zlib1g"
+
+  - action: apt
+    recommends: false
+    packages:
+      - openjdk-8-jre
+
+  - action: run
+    description: "Enable systemd-networkd"
+    chroot: true
+    command: systemctl enable systemd-networkd.service
+
+  - action: run
+    description: "Enable SSH server"
+    chroot: true
+    command: systemctl enable ssh.socket && systemctl enable ssh.service
+
+  - action: pack
+    file: "{{ $image }}"
+    compression: gz
